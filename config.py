@@ -8,7 +8,6 @@ ADMINS = [int(admin_id) for admin_id in os.getenv('ADMINS').split(',')]
 CHANNEL_ID = int(os.getenv('CHANNEL_ID'))
 DEBUG = os.getenv("DEBUG", 'False').lower() in ('true', '1', 't')
 
-# Состояние бота
 class BotState:
     def __init__(self):
         self.active = True
