@@ -4,25 +4,20 @@ from datetime import datetime
 from typing import List, Tuple, Optional
 from .models import User, SentImage
 
-# Блокировка для потокобезопасности
 db_lock = Lock()
 
 def get_connection() -> sqlite3.Connection:
-    """Создает и возвращает соединение с базой данных"""
     return sqlite3.connect('users.db', check_same_thread=False)
 
 def init_db():
-    """Инициализация структуры базы данных"""
     with db_lock:
         conn = get_connection()
         cursor = conn.cursor()
         
-        # Таблица пользователей
         cursor.execute('''CREATE TABLE IF NOT EXISTS users (
                          user_id INTEGER PRIMARY KEY,
                          username TEXT)''')
         
-        # Таблица изображений (теперь без UNIQUE ограничения на user_id)
         cursor.execute('''CREATE TABLE IF NOT EXISTS sent_images (
                          id INTEGER PRIMARY KEY AUTOINCREMENT,
                          user_id INTEGER NOT NULL,
@@ -34,14 +29,12 @@ def init_db():
         conn.close()
 
 def add_user(user: User) -> bool:
-    """Добавление нового пользователя"""
     with db_lock:
         conn = None
         try:
             conn = get_connection()
             cursor = conn.cursor()
             
-            # Используем INSERT OR IGNORE чтобы избежать дубликатов
             cursor.execute(
                 '''INSERT INTO users (user_id, username) 
                    VALUES (?, ?)''',
@@ -50,7 +43,6 @@ def add_user(user: User) -> bool:
             
             conn.commit()
             
-            # Проверяем, была ли действительно выполнена вставка
             if cursor.rowcount > 0:
                 print(f"{datetime.now():%Y-%m-%d %H:%M} Добавлен новый пользователь: {user.user_id}")
                 return True
@@ -62,7 +54,6 @@ def add_user(user: User) -> bool:
                 conn.close()
 
 def get_all_users() -> List[User]:
-    """Получение всех пользователей"""
     with db_lock:
         conn = None
         try:
@@ -78,7 +69,6 @@ def get_all_users() -> List[User]:
                 conn.close()
 
 def add_sent_image(user_id: int, file_id: str) -> bool:
-    """Добавляет изображение в базу данных"""
     with db_lock:
         conn = None
         try:
@@ -98,7 +88,6 @@ def add_sent_image(user_id: int, file_id: str) -> bool:
                 conn.close()
 
 def get_sent_images(user_id: int) -> List[SentImage]:
-    """Получение всех изображений пользователя"""
     with db_lock:
         conn = None
         try:
@@ -117,7 +106,6 @@ def get_sent_images(user_id: int) -> List[SentImage]:
                 conn.close()
 
 def get_users_with_images() -> List[Tuple[User, SentImage]]:
-    """Получение пользователей с отправленными изображениями"""
     with db_lock:
         conn = None
         try:
@@ -134,7 +122,6 @@ def get_users_with_images() -> List[Tuple[User, SentImage]]:
                 conn.close()
 
 def get_users_without_images() -> List[User]:
-    """Получение пользователей без отправленных изображений"""
     with db_lock:
         conn = None
         try:
@@ -153,7 +140,6 @@ def get_users_without_images() -> List[User]:
                 conn.close()
 
 def get_user_count() -> int:
-    """Получение количества пользователей"""
     with db_lock:
         conn = None
         try:
