@@ -9,14 +9,12 @@ from utils.keyboards import (
 )
 
 def setup_admin_handlers(bot):
-    # Вспомогательные функции
     def is_admin(user_id: int) -> bool:
         return user_id in ADMINS
 
     def send_not_admin_message(chat_id: int):
         bot.send_message(chat_id, "⛔ У вас нет прав администратора")
 
-    # Обработчики команд
     def show_admin_panel(chat_id, message_id=None):
         """Универсальная функция отображения/обновления админ-панели"""
         
@@ -34,7 +32,6 @@ def setup_admin_handlers(bot):
         )
         
         if message_id:
-            # Редактируем существующее сообщение
             bot.edit_message_text(
                 chat_id=chat_id,
                 message_id=message_id,
@@ -42,7 +39,6 @@ def setup_admin_handlers(bot):
                 reply_markup=admin_panel_markup()
             )
         else:
-            # Отправляем новое сообщение
             bot.send_message(
                 chat_id,
                 text,
@@ -57,7 +53,6 @@ def setup_admin_handlers(bot):
         
         show_admin_panel(message.chat.id)
 
-    # Обработчики callback-запросов
     @bot.callback_query_handler(func=lambda call: call.data == 'undo_collection')
     def handle_toggle_bot(call: CallbackQuery):
         if not is_admin(call.from_user.id):
