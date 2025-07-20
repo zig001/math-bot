@@ -20,15 +20,12 @@ def setup_collection_handlers(bot):
         user_id = message.from_user.id
         username = message.from_user.username or f"ID:{user_id}"
 
-        # Обрабатываем все изображения в сообщении
         processed_count = 0
         file_id = message.photo[-1].file_id
 
         if add_sent_image(user_id, file_id):
-            # Пересылаем изображение админу
             caption_text = f"Дата: {datetime.now():%Y-%m-%d %H:%M}, от @{username}"
 
-            # Если есть подпись (текст сообщения), добавляем её к caption
             if message.caption:
                 caption_text += f"\nПодпись: {message.caption}"
 
@@ -41,14 +38,11 @@ def setup_collection_handlers(bot):
     @bot.message_handler(content_types=['text'], 
                      func=lambda m: bot_state.current_collection['active'])
     def handle_user_text(message: Message):
-        # Ваша логика для обработки текстовых сообщений
-        # Например, отправка текста админу или сохранение
         bot.send_message(
             bot_state.current_collection['send_to_id'],
             f"Получен текст от @{message.from_user.username or f'ID:{message.from_user.id}'}: \n{message.text}"
         )
-            
-    # Админские команды
+    
     @bot.message_handler(commands=['collection_stats'], 
                         func=lambda m: m.from_user.id in ADMINS)
     def handle_collection_stats(message: Message):
