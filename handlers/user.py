@@ -16,7 +16,6 @@ def setup_user_handlers(bot):
         username = message.from_user.username if message.from_user.username else None
         add_user(User(message.chat.id, username))
 
-        # invite_link = bot.export_chat_invite_link(CHANNEL_ID)
         invite_link = "https://t.me/+0fqNDpG-Nf0yMDJi"
         markup = types.InlineKeyboardMarkup()
         buttons = [
